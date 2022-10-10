@@ -1,0 +1,633 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>NEOX</title>
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="keywords" content="JavaScript, WebRTC">
+    <meta name="description" content="WebRTC codelab">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/calmdemo.css">
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+    <link rel="stylesheet" href="css/bootstrap-multiselect.css">
+    <link rel="icon" href="./images/dc-img/logo-fav.png" type="image/gif" sizes="16x16">
+    <script src="./js/jquery-2.1.3.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/bootstrap-multiselect.js"></script>
+
+    <script src="https://cdn.webrtc-experiment.com/RecordRTC.js"></script>
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <!--<script src="https://webrtc.github.io/adapter/adapter-6.0.4.js"></script>-->
+    <script src="./js/protobuf.js"></script>
+    <!-- <script src="./js/protobuf.min.js"></script> -->
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.154.0.min.js"></script>
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js"></script>
+    <script src="./js/serverdate.js"></script>
+    <!--<script src="https://connectarena.github.io/calmsdk-0.1.1.min.js"></script>-->
+    <script src="./js/sha256.js"></script>
+    <script src="./js/calmsdk-001.js"></script>
+    <script src="./js/wrtc.js"></script>
+    <script src="./js/ca.js"></script>
+</head>
+
+<body>
+    <!--<div id="uconstruction"><img src="./images/renovate.jpg"/></div>-->
+    <div id="login" class="nohide">
+        <div id="login-view" class="login">
+            <!-- <h1>Neox</h1>
+            <p style="color:#003366">Virtual Service</p> -->
+            <img src="./images/ic_login_logo.png">
+            <!--Call Block-->
+            <div id="login-controls-view">
+                <h4>Login</h4>
+
+                <div class="tab-content">
+                    <div id="home" class="tab-pane fade in active">
+                        <br>
+
+                        <label for="login">User name</label>
+                        <input type="text" id="usernametxb" name="Username" placeholder="User name" autofocus>
+
+                        <label for="lname">Password</label>
+                        <input type="password" id="passwordtxb" name="Password" placeholder="password">
+
+
+                        <button id="loginbtn" class="button" value="Login"> Login </button>
+
+                    </div>
+
+                </div>
+                <div>
+                    <strong>
+                  Please login using mobile number and password configured in your mobile app.
+                  </strong>
+                </div>
+            </div>
+
+            <div id="activate-view" class="hide">
+                <label for="lname">Activation code</label>
+                <input type="text" id="activationcodetxb" name="activationCode" placeholder="1234...">
+                <button id="activatebtn" class="button" value="Activate"> Activate </button>
+            </div>
+
+
+            <br/>
+            <div>
+                <p style="color:#003366">&#169; stl.tech 2022</p>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+    <div class="modal fade" id="callModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content call-pane">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="call-title">Incoming call</h4>
+                </div>
+                <div class="modal-body">
+                    <audio id="ringtone">
+            <source src="./res/ringtone.mp3" type="audio/mpeg">
+          </audio>
+                    <button id="callAnswerBtn" class="button" value="Answer"> Answer </button>
+                    <button id="callDeclineBtn" class="button" value="Decline"> Decline </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal fade" id="conferenceCallModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content call-pane">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="call-title">Incoming call</h4>
+                </div>
+                <div class="modal-body">
+                    <audio id="conferenceRingtone" controls allow="autoplay" loop="loop" style="display: none;">
+            <source src="./res/ringtone.mp3" type="audio/mp3"  >
+          </audio>
+                    <button id="conferenceCallAnswerBtn" class="button" value="Answer"> Answer </button>
+                    <button id="conferenceCallDeclineBtn" class="button" value="Decline"> Decline </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="add-new-contact" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">New contact</h4>
+                    <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+                </div>
+                <div class="modal-body" style="padding:10px 50px">
+                    <input type="text" id="addContactTxb" name="addContactTxb" placeholder="contact name...">
+                    <button id="addContactbtn" class="button" value="Add"> Add contact </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="sendbtn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <!-- <div class="modal fade" id="makePSTNCallModel" role="dialog">
+        <div class="modal-dialog">
+
+            <div class="modal-content" id="makePSTNCall">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Make PSTN Call</h4>
+                </div>
+                <div class="modal-body" style="padding:10px 50px">
+                    <input type="text" id="makePSTNCallTxb" name="makePSTNCallTxb" placeholder="DESTINATION: mobile number with country code (Ex: +14155213536)">
+                    <button class="button pstn-call" value="Make PSTN Call"> Make PSTN Call </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="sendbtn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div> -->
+    <!-- <div class="modal fade" id="dragModal" ng-init="dragElement(event)"> -->
+    <div id="dragModal">
+        <div class="">
+            <!-- <div class="preloader" ng-show="loading"></div> -->
+            <div class="modal-content dialer container">
+                <div class="modal-header" style="padding: 10px;
+                    font-size: 10px;" id="dragModalheader">
+                    <h5 class="modal-title" id="mobileDialerHeader">Dial pad</h5>
+                    <h5 class="modal-title blink_me" style="display: none;" id="callInProgress">
+                        Call in progress
+                    </h5>
+                    <h5 class="modal-title blink_me" style="display: none;" id="callEndSuccessfully">
+                        Call end successfully
+                    </h5>
+                    <div id="tempTimeDialer" style="display:none;"></div>
+                    <div id="timerDialer" style="display:none;">
+                        <span id="hours">00:</span>
+                        <span id="mins">00:</span>
+                        <span id="seconds">00</span>
+                    </div>
+                    <button type="button" class="btn-close" onclick="dragFunc()" aria-label="Close">X</button>
+                </div>
+                <div class="modal-body" ng-init="inputValFunct()">
+                    <div class="" id="dialerScreen">
+                        <!-- <div id="output" style="display:none"></div> -->
+                        <input type="text" class="form-control" id="inputOutput" maxlength="13" onkeyup="changeDial(event)">
+
+                        <div class="row-dial">
+                            <div class="digit" id="one" onclick="dialClick(1)">1</div>
+                            <div class="digit" id="two" onclick="dialClick(2)">2
+                                <!-- <div class="sub">ABC</div> -->
+                            </div>
+                            <div class="digit" id="three" onclick="dialClick(3)">
+                                3
+                                <!-- <div class="sub">DEF</div> -->
+                            </div>
+                        </div>
+                        <div class="row-dial">
+                            <div class="digit" id="four" onclick="dialClick(4)">4
+                                <!-- <div class="sub">GHI</div> -->
+                            </div>
+                            <div class="digit" id="five" onclick="dialClick(5)">5
+                                <!-- <div class="sub">JKL</div> -->
+                            </div>
+                            <div class="digit" onclick="dialClick(6)" id="six">6
+                                <!-- <div class="sub">MNO</div> -->
+                            </div>
+                        </div>
+                        <div class="row-dial">
+                            <div class="digit" id="seven" onclick="dialClick(7)">7
+                                <!-- <div class="sub">PQRS</div> -->
+                            </div>
+                            <div class="digit" id="eight" onclick="dialClick(8)">8
+                                <!-- <div class="sub">TUV</div> -->
+                            </div>
+                            <div class="digit" id="nine" onclick="dialClick(9)">9
+                                <!-- <div class="sub">WXYZ</div> -->
+                            </div>
+                        </div>
+                        <div class="row-dial">
+                            <div class="digit" id="plus" onclick="dialClick('+')">+
+                            </div>
+                            <div class="digit" id="zero" onclick="dialClick(0)">0
+                            </div>
+                            <div class="digit" onclick="backspace()"> <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div class="row-dial">
+                            <div class="digit" onclick="clearDialer()"> R</div>
+                            <div class="digit startDialer" onclick="callStart()" id="startbtn">Call</div>
+                            <video id="localVideo" autoplay muted style="display: none;"></video>
+                            <video id="remoteVideo" autoplay width="200px" height="180px" style="display: none;"></video>
+                            <div class="digit" onclick="muteUnmute()" id="mute"> <i class="fa fa-microphone"></i></div>
+                        </div>
+                    </div>
+                    <div id="incomingCallScreen" style="display: none;">
+                        <audio id="ringtone">
+                                <source src="./res/ringtone.mp3" type="audio/mpeg"  >
+                            </audio>
+
+                        <video id="localVideo" autoplay muted style="display: none;"></video>
+                        <video id="remoteVideo" autoplay width="200px" height="180px" style="display: none;"></video>
+                        <h5 id="callerName"></h5>
+                        <div class="divAnswerDecline">
+                            <div>
+                                <button type="button" id="callDeclineBtn" onclick="callDeclineBtn()" class="button" value="Decline">  </button>
+                                <div>
+                                    Decline
+                                </div>
+
+                            </div>
+                            <div>
+                                <button type="button" id="callAnswerBtn" onclick="callAnswerBtn()" class="button" value="Answer">  </button>
+                                <div>
+                                    Answer
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="webGroupChat" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content" id="createGroupCall">
+                <div class="modal-header">
+                    <h4 class="modal-title">Create Group</h4>
+                    <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+                </div>
+                <div class="modal-body" style="padding:10px 50px">
+                    <input type="text" id="groupName" name="groupName" placeholder="Group name">
+                    <button class="button createGroupBtns" value="createGroupBtn" id="createGroupBtn" data-dismiss="modal"> Create </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="sendbtn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="addGroupParticipantsPopup" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Participants to Group</h4>
+                    <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+                </div>
+                <div class="modal-body" style="padding:10px 50px">
+                    <select id="groupParticipantList" multiple="multiple">
+                        </select>
+                    <input type="button" class="button addParticipantsBtn" class="button" value="Add" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="sendbtn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <!--Chat--Block-->
+    <div class="container-fluid" id="wrapper" style="display: none;">
+        <div class="call-header">
+            <!-- <div id="callTimer" class="call-mem-time">callTimer</div> -->
+            <div id="call-mem-name">
+
+            </div>
+            <div class="imgbox" id="profileDiv">
+                <img src="./images/ic_login_logo.png">
+            </div>
+        </div>
+
+        <div class="name-block">
+
+
+            <div class="btn recent-contacts flip" href="#recentActivityList">
+                <img src="./images/dc-img/ic-recents.png" alt="">
+            </div>
+            <div class="btn all-chat flip" href="#allChat">
+                <img src="./images/dc-img/ic-chat.png">
+            </div>
+
+            <div class="btn all-call flip" href="#allCall">
+                <img src="./images/dc-img/ic-calls.png" alt="">
+            </div>
+            <div class="btn contacts-list flip" href="#contactsList">
+                <img src="./images/dc-img/ic-contacts.png" alt="">
+            </div>
+            <div class="btn add-group-call flip" href="#groupList">
+                <img src="./images/dc-img/ic-groups.png" alt="">
+            </div>
+            <div class="btn add-new-contact">
+                <i class="fa fa-user-plus" data-toggle="tooltip" title="Add New Contact" aria-hidden="true"></i>
+            </div>
+
+            <div class="btn make-pstn-call">
+                <i class="fa fa-phone" data-toggle="tooltip" title="PSTN Call" aria-hidden="true"></i>
+            </div>
+            <div class="btn create-group-call">
+                <i class="fa fa-users" data-toggle="tooltip" title="Group-Call" aria-hidden="true"></i>
+            </div>
+            <!-- 
+                <div class="btn logout">
+                    <i class="fa fa-sign-out" data-toggle="tooltip" title="Logout" aria-hidden="true"></i>
+                </div> -->
+        </div>
+        <div id="leftSection">
+
+            <div class="header">
+                <div class="logo-img" id="dc-logo-img">
+                    <img src="./images/ic_login_logo.png">
+                </div>
+                <!-- <div class="dc-logo">
+                    Neox
+                </div> -->
+            </div>
+
+            <div class="leftSection-lastblock">
+
+                <div id="contactsList" class="panel">
+                    <!-- data will add dynamically-->
+
+                </div>
+
+                <div id="groupList" class="panel">
+                    <!-- data will add dynamically-->
+
+                </div>
+
+
+                <div id="recentActivityList" class="panel">
+                    <!-- data will add dynamically-->
+                </div>
+                <div id="allChat" class="panel">
+                    <!-- data will add dynamically-->
+                </div>
+                <div id="allCall" class="panel">
+                    <!-- data will add dynamically-->
+                </div>
+
+            </div>
+
+        </div>
+
+        <div id="rightSection">
+            <div class="main-righthead">
+                <div class="searchbar">
+                    <input id="serachBar" type="text" name="search" placeholder="Search..">
+                    <div id="searchResultDiv">
+                        <ul></ul>
+                    </div>
+                </div>
+                <div class="account-holder">
+                    <div class="profile-name">
+                        User Name
+                    </div>
+                    <div class="imgbox" id="profileDiv">
+                        <img src="./images/dc-img/ic-profile.png">
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                            <i class="arrow down"></i></button>
+                        <ul class="dropdown-menu" id="${initialOverlayDetailsList.groupcontacts[i]}">
+                            <li>
+                                <a href="#" id="ProfilePage">Profile</a>
+                            </li>
+                            <li class="logout">
+                                <a>Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="profileHead">
+                <div class="profileInfo">Profile info</div>
+            </div>
+            <div class="righthead">
+                <div class="rphoto">
+                    <!-- <i class="fa fa-user" aria-hidden="true"></i> -->
+                </div>
+                <div class="rpanel">
+                    <div class="group-info-contacts-block">
+
+                        <div class="info">
+                            NAME
+                        </div>
+                        <div id="groupContactList"></div>
+                    </div>
+                    <div class="istyping">
+                    </div>
+                    <div id="callBlock" class="pull-right">
+                        <input type="file" max-uploads=1 id="chatFileUpload" style="display: none;" />
+                        <!-- <div class="action-btns remove-contact"><i class="fa fa-user-times" data-toggle="tooltip" title="Remove Contact" aria-hidden="true"></i></div> -->
+                        <div class="action-btns attachment"><img src="./images/dc-img/ic-attachments.png" alt=""></div>
+                        <div class="action-btns video-call"><img src="./images/dc-img/ic-video.png"></div>
+                        <div class="action-btns audio-call"><img src="./images/dc-img/ic-call.png" alt=""></div>
+                        <div id="blockUser" class="action-btns block-user unblock"></div>
+
+                    </div>
+                    <div id="callBlockGroup" class="pull-right">
+                        <div class="action-btns group-attachment"><img src="./images/dc-img/ic-attachments.png" alt=""></div>
+                        <div class="action-btns group-video-call"><img src="./images/dc-img/ic-video.png"></div>
+                        <div class="action-btns group-audio-call"><img src="./images/dc-img/ic-call.png" alt=""></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="welcome">
+                <div class="brand">
+                    <img src="./images/ic_login_logo.png">
+                </div>
+                <div>
+                    <h3>Welcome To Neox</h3>
+                </div>
+            </div>
+            <!-- Main Chat Window-->
+            <div id="chatDisplay" style="display: none">
+                <div id="chatItems">
+                    <div class="chat-window-items" id="chat-window-scroll-id">
+                        <!--Dynamically  added chat messages-->
+
+
+
+                    </div>
+
+
+                    <!--end remote-->
+                </div>
+
+                <div class="send-message">
+                    <input type="text" id="chatBox" placeholder="type a message">
+                    <button class="sendbtn btn-default" id="sendChat"> Send <img src="./images/dc-img/ic-send-arrow.png"></button>
+                </div>
+            </div>
+
+            <div id="demo-view" class="hide">
+                <div class="container-fluid" id="callWrapper" style="display:none">
+
+                    <video id="localVideo" autoplay muted></video>
+
+                    <video id="remoteVideo" autoplay></video>
+
+
+                    <div id="call-mem-name">
+
+                    </div>
+                    <!-- <div id="callControls">
+                        <div id="mute" class="call-controls"><i class="fa fa-microphone-slash" aria-hidden="true"></i></div>
+                        <div id="callEnd" class="call-controls"> <i class="fa fa-phone" aria-hidden="true"></i></div>
+
+                        <div id="callTimer" class="call-mem-time"></div>
+                    </div> -->
+                    <!-- </div> -->
+                </div>
+                <div class="container-fluid" id="groupCallWrapper" style="display: none;">
+
+                    <!--<video id="local-Video" autoplay muted></video> -->
+                    <video id="remoteVideo0" autoplay></video>
+
+                </div>
+
+                <div class="call-footer">
+                    <div id="callControls">
+                        <div id="callTimer" class="call-mem-time"></div>
+                        <div id="mute" class="call-controls">
+                            <!-- <i class="fa fa-microphone-slash" aria-hidden="true"></i> -->
+                        </div>
+                        <div id="callEnd" class="call-controls">
+                            <!-- <i class="fa fa-phone" aria-hidden="true"></i> -->
+                        </div>
+
+                    </div>
+                </div>
+                <div class="conference-call-footer">
+                    <div id="conferenceCallControls">
+                        <div id="callTimer" class="call-mem-time"></div>
+                        <div class="call-controls">
+                            <img src="./images/ic-screen-share-on.png" id="shareButton">
+                        </div>
+                        <div id="muteConference" class="call-controls"></div>
+                        <div id="conferenceCallEnd" class="call-controls">
+                            <!-- <i class="fa fa-phone" aria-hidden="true"></i> -->
+                        </div>
+
+                    </div>
+                </div>
+                <div id="profile-page" style="display: none">
+                    <div class="profile-page-block-1">
+                        <div class="profile-inner-page-block-1">
+
+                            <div class="profile-img"><img src="./images/dc-img/ic_calling_avatar.png"></div>
+                            <div class="profile-cam"><img src="./images/dc-img/ic-camera.png"> </div>
+                        </div>
+                        <div class="profile-page-profile-name"></div>
+                    </div>
+                    <label for="uname">User name</label>
+                    <input type="text" id="uName" name="Uname" placeholder="User Name" autofocus>
+                    <label for="uStatus">User Status</label>
+                    <input type="text" id="uStatus" name="uStatus" placeholder="User Status" autofocus>
+                    <label for="uType">User Type</label>
+                    <input type="text" id="uType" name="uType" placeholder="User Type" autofocus>
+                    <br>
+                    <input type="button" value="Save" class="btn profileSaveBtn" id="setProfileBtn">
+                </div>
+
+                <div id="overlay">
+                    <div class="overlay-header">
+                        <div class="group-close">
+                            <button class="overlay-close" onclick="closeOverlay()">
+							<span data-testid="x" data-icon="x" class="">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+									<path fill="currentColor"
+										d="M19.1 17.2l-5.3-5.3 5.3-5.3-1.8-1.8-5.3 5.4-5.3-5.3-1.8 1.7 5.3 5.3-5.3 5.3L6.7 19l5.3-5.3 5.3 5.3 1.8-1.8z">
+
+									</path>
+								</svg>
+							</span>
+						</button>
+                        </div>
+
+                        <div>Group info</div>
+
+                    </div>
+                    <div class="overlay-second-block">
+                        <div class="overlay-pic-block">
+                            <div class="inner-overlay-pic-block">
+                                <div id="inner-pic-block">
+                                    <img src="./images/phone.png">
+                                </div>
+                                <div class="overlay-group-name-block">
+                                    <input class="overlay-group-name edit-input" type="text" readonly>
+                                    <i onclick="overlayGroupNameEdit(event)" class="group-edit fa fa-edit"></i>
+                                    <i onclick="overlayGroupUpdate(event)" class="group-update fa fa-check" style="display: none;"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="overlay-description-block">
+                            <div class="overlay-description-head">Description</div>
+                            <div class="overlay-description-details-block">
+
+                                <input class="overlay-description edit-input" type="text" readonly>
+                                <i onclick="overlayGroupNameEdit(event)" class="group-edit fa fa-edit"></i>
+                                <i onclick="overlayGroupUpdate(event)" class="group-update fa fa-check" style="display: none;"></i>
+
+                            </div>
+                        </div>
+                        <div class="overlay-group-participants-block">
+
+                            <div class="overlay-participants-head">
+                                <div class="count-participants"></div>&nbsp;&nbsp;
+                                <div>Participants</div>
+                            </div>
+                            <div class="inner-overlay-group-participants">
+                                <ul class="overlay-group-participants-list">
+
+                                </ul>
+
+                            </div>
+                        </div>
+                        <div class="group-exit-block">
+                            <ul>
+                                <li class="exit-group" onclick="exitGroup(event)"><i class="fa fa-sign-out"></i>&nbsp;&nbsp;
+                                    <div>Exit group</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+</body>
+
+</html>

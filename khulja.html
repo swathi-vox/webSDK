@@ -1,0 +1,303 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Konverz</title>
+
+  <link rel="manifest" href="/manifest.json">
+	<meta name="keywords" content="JavaScript, WebRTC">
+	<meta name="description" content="WebRTC codelab">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1">
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+	<link rel="stylesheet" href="css/calmdemo.css">
+	<link rel="stylesheet" href="css/style.css" type="text/css" />
+
+	<script src="./js/jquery.min.js"></script>
+	<script src="./js/bootstrap.min.js"></script>
+
+        <script src="https://cdn.webrtc-experiment.com/RecordRTC.js"></script>
+	<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+	<!--<script src="https://webrtc.github.io/adapter/adapter-6.0.4.js"></script>-->
+	<script src="./js/protobuf.min.js"></script>
+	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.154.0.min.js"></script>
+	<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js"></script>
+	<script src="./js/serverdate.js"></script>
+	<!--<script src="https://connectarena.github.io/calmsdk-0.1.1.min.js"></script>-->
+	<script src="./js/sha256.js"></script>
+	<script src="./js/calmsdk-001.js"></script>
+	<script src="./js/wrtc.js"></script>
+	<script src="./js/ca.js"></script>
+
+
+        <script>
+        function send_msg() {
+            var recipient = document.getElementById("txbrecipient").value;
+            var message   = document.getElementById("txbmsg").value;
+            var count     = Number(document.getElementById("txbcount").value);
+
+
+            var i;
+            for (i=0; i< count; i++) {
+               CS.chat.sendMessage(recipient, message+i.toString(), CS.chat.ChatType.TEXT_PLAIN, true, function(err, resp) {
+               /*CS.chat.sendMessage(recipient, message+i.toString(), CS.chat.ChatType.TEXT_PLAIN, 0, function (err, resp){*/
+                  if (err != 200) {
+                       console.log("send chat failed with code "+err+" reason "+resp);
+                  } else {
+                       console.log("send chat succeeded ");
+                  }
+               });
+               console.log("sending message "+i.toString());
+            }
+        }
+
+
+        </script>
+</head>
+
+<body>
+
+        <input type="text" id="txbrecipient" name="recipient" placeholder="Recipient contact">
+        <input type="text" id="txbmsg" name="message" placeholder="Messge to be sent">
+        <input type="text" id="txbcount" name="count" placeholder="Count" style="width: 150px;">
+	<input type="button" onclick="send_msg()" id="Send" value="Send"></input>
+        <!--<div id="uconstruction"><img src="./images/renovate.jpg"/></div>-->
+        <div id="login" class="nohide">
+	  <div id="login-view" class="login">
+	  <h1>Konverz</h1>
+          <p style="color:#003366">Developed using VOX-CPaaS</p>
+	  <!--Call Block-->
+                  <div id="login-controls-view">
+  <ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#home">Login</a></li>
+    <!--<li><a data-toggle="tab" href="#menu1">Signup</a></li>-->
+  </ul>
+
+  <div class="tab-content">
+    <div id="home" class="tab-pane fade in active">
+	  	  </br>
+   	  	  <label for="login">User name</label>
+   	   	  <input type="text" id="usernametxb" name="Username" placeholder="User name" autofocus>
+	  	  </br>
+	  	  </br>
+   	   	  <label for="lname">Password</label>
+   	   	  <input type="password" id="passwordtxb" name="Password" placeholder="password">
+	  	  </br>
+	  	  </br>
+
+   	   	  <button id="loginbtn" class="button" value="Login"> Login </button>
+ 
+    </div>
+
+  </div>
+
+	  	</div>
+
+                  <div id="activate-view" class="hide">
+   	   	  <label for="lname">Activation code</label>
+   	   	  <input type="text" id="activationcodetxb" name="activationCode" placeholder="1234...">
+   	   	  <button id="activatebtn" class="button" value="Activate"> Activate </button>
+                  </div>
+            <div>
+              <strong>
+              Please login using mobile number and password configured in your mobile app.
+              </strong>
+            </div>
+
+	    <br/>
+	    <div>
+              <p>SDK Version <span id="sdkversion"></span></p>
+              <p>GUI Version <span id="guiversion">0.4.1</span></p>
+	      <p>Konverz is only for the SDK demo purpose, KONVERZ IS NOT THE END PRODUCT.</p>
+              <p style="color:#003366">Powered by Voxvalley Technologies pte ltd, Singapore</p>
+            </div>
+
+	  </div>
+	</div>
+	<div id="demo-view" class="hide">
+	<div class="container-fluid" id="callWrapper" style="display:none">
+		
+                <video id="localVideo" autoplay muted ></video>
+                <video id="remoteVideo" autoplay width="200px" height="180px" ></video>
+
+		<div class="call-mem-pic">
+				<i class="fa fa-user-circle" aria-hidden="true"></i>
+		</div>
+		<div id="call-mem-name">
+		
+		</div>
+		
+		<div id="callControls">
+			<div id="mute" class="call-controls"><i class="fa fa-microphone-slash" aria-hidden="true"></i></div>
+			<div id="callEnd" class="call-controls"> <i class="fa fa-phone" aria-hidden="true"></i></div>
+		
+			<div id="callTimer" class="call-mem-time"></div>
+		</div>		
+		
+	</div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="profileModal" role="dialog" >
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content call-pane">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Update your profile</h4>
+        </div>
+        <div class="modal-body">
+   	   <input type="text" id="profileNameTxb" name="profileNameTxb" placeholder="Your name...">
+   	   <input type="text" id="profileStatusTxb" name="profileStatusTxb" placeholder="Presence status message...">
+   	   <button id="setProfileBtn" class="button" value="Save"> Save </button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="callModal" role="dialog" >
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content call-pane">
+        <div class="modal-header">
+          <h4 class="modal-title" id="call-title">Incoming call</h4>
+        </div>
+        <div class="modal-body">
+          <audio id="ringtone">
+            <source src="./res/ringtone.mp3" type="audio/mpeg">
+          </audio>
+   	   <button id="callAnswerBtn" class="button" value="Answer"> Answer </button>
+   	   <button id="callDeclineBtn" class="button" value="Decline"> Decline </button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="add-new-contact" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">New contact</h4>
+        </div>
+        <div class="modal-body" style="padding:10px 50px">
+   	   <input type="text" id="addContactTxb" name="addContactTxb" placeholder="contact name...">
+   	   <button id="addContactbtn" class="button" value="Add"> Add contact </button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="sendbtn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+
+	<!--Chat--Block-->
+	<div class="container-fluid" id="wrapper">
+		<div id="leftSection">
+			<div class="header">
+				<div class="imgbox" id="profileDiv">
+						<i class="fa fa-user" aria-hidden="true"></i>
+				</div>
+				<div class="name-block">
+					<div class="profile-name">
+						User Name
+					</div>
+
+					<div  class="btn recent-contacts">
+						<i class="fa fa-clock-o" data-toggle="tooltip" title="Recent Contacts" aria-hidden="true"></i>
+					</div>
+
+					<div  class="btn contacts-list">
+						<i class="fa fa-address-book-o" data-toggle="tooltip" title="Address Book" aria-hidden="true"></i>
+					</div>
+
+					<div  class="btn add-new-contact">
+						<i class="fa fa-user-plus" data-toggle="tooltip" title="Add New Contact" aria-hidden="true"></i>
+					</div>
+
+					<div  class="btn logout">
+						<i class="fa fa-sign-out" data-toggle="tooltip" title="Logout" aria-hidden="true"></i>
+					</div>
+				</div>
+			</div>
+			<!--
+			<div class="searchbar">
+				<input id="serachBar" type="text" name="search" placeholder="Search..">
+			</div>
+			-->
+			<div id="contactsList">
+				<!-- data will add dynamically-->
+
+			</div>
+			<div id="recentActivityList">
+				<!-- data will add dynamically-->
+			</div>
+		</div>
+
+		<div id="rightSection">
+			
+			<div class="righthead">
+				<div class="rphoto">
+						<i class="fa fa-user" aria-hidden="true"></i>
+				</div>
+				<div class="rpanel">
+					<div class="info">
+						NAME
+					</div>
+					<div class="istyping">
+					</div>
+					<div id="callBlock">
+                                                <input type="file" max-uploads=1 id="chatFileUpload" style="display: none;" />
+						<div class="action-btns remove-contact"><i class="fa fa-user-times" data-toggle="tooltip" title="Remove Contact" aria-hidden="true"></i></div>
+						<div class="action-btns attachment"><i class="fa fa-paperclip" data-toggle="tooltip" title="Attach File" aria-hidden="true"></i></div>
+						<div class="action-btns video-call"><i class="fa fa-video-camera" data-toggle="tooltip" title="Start IP Video Call" aria-hidden="true"></i></div>
+						<div class="action-btns audio-call"><i class="fa fa-mobile" data-toggle="tooltip" title="Start IP Audio Call" aria-hidden="true"></i></div>
+						<div class="action-btns pstn-call"><i class="fa fa-phone" data-toggle="tooltip" title="PSTN Call" aria-hidden="true"></i></div>
+					</div>
+				</div>
+			</div>
+
+			<div id="welcome" >
+				<div class="brand">
+						<i class="fa fa-whatsapp" aria-hidden="true"></i>
+				</div>
+				<div>
+					<h3>Welcome To Konverz</h3>
+				</div>
+			</div>
+			<!-- Main Chat Window-->	
+			<div id="chatDisplay" style="display: none">
+				<div id="chatItems">
+					<div class="chat-window-items" id="chat-window-scroll-id">
+								<!--Dynamically  added chat messages-->
+								
+			
+							
+					</div>
+					
+
+					<!--end remote-->
+			</div>
+
+				<div class="send-message">
+					<input type="text" id="chatBox" placeholder="type a message">
+					 <button class="sendbtn btn-default" id="sendChat"> Send</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	</body>
+
+</html>
