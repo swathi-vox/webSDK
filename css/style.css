@@ -181,13 +181,13 @@ body {
 }
 
 #mute {
-    /* background-image: url(../images/dc-img/ic-audio-normal.png); */
+    background-image: url(../images/dc-img/ic-audio-normal.png);
     background-repeat: no-repeat, repeat;
     background-size: 40px 40px;
 }
 
 #mute:hover {
-    /* background-image: url(../images/dc-img/ic-audio-hover.png); */
+    background-image: url(../images/dc-img/ic-audio-hover.png);
     background-repeat: no-repeat, repeat;
     background-size: 40px 40px;
 }
@@ -469,6 +469,47 @@ body {
     background-color: #EEE;
 }
 
+.bubble .arrow-down-btn:hover,
+#contactsList .con-list-mem .arrow-down-btn:hover {
+    opacity: 1;
+}
+
+.bubble .arrow-down-btn,
+#contactsList .con-list-mem .arrow-down-btn {
+    position: absolute;
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    opacity: 0;
+    transition: opacity .35s ease;
+    top: 5px;
+    right: 7px;
+}
+
+.contact-list-dropdown li {
+    list-style-type: none;
+}
+
+.call-footer .call-mem-name {
+    text-align: center;
+    padding: 15px;
+    font-size: 25px;
+    color: #fff;
+}
+
+.contact-list-dropdown {
+    background-color: #fff;
+    padding: 10px;
+    position: absolute;
+    right: 12px;
+    box-shadow: 1px 1px 8px 2px #ccc;
+    top: 19px;
+    display: none;
+}
+
 .bubble .messageSec {
     float: left;
     width: calc(100% - 50px);
@@ -567,6 +608,7 @@ body {
     display: flex;
     flex-direction: column;
     overflow: auto;
+    height: calc(100vh - 120px);
 }
 
 #dragModal {
@@ -585,7 +627,7 @@ body {
 }
 
 .dialer.container {
-    background-color: #030547;
+    background-color: #0f2f89;
     width: 320px;
     padding: 0px;
     margin: 30px auto;
@@ -777,7 +819,7 @@ body {
 
 #callAnswerBtn {
     background-image: url(../images/answer-icon.png);
-    width: 50px;
+    /* width: 50px; */
     height: 50px;
     border-radius: 50px;
     background-repeat: no-repeat;
@@ -785,9 +827,16 @@ body {
     border: 1px solid #795f5fd9;
 }
 
+#dialerScreen #mute {
+    background-image: url(../images/dc-img/ic-audio-normal.png);
+    background-repeat: no-repeat, repeat;
+    background-size: 50px 47px !important;
+    padding: 0;
+}
+
 #callDeclineBtn {
     background-image: url(../images/decline.png);
-    width: 50px;
+    /* width: 50px; */
     height: 50px;
     border-radius: 50px;
     background-repeat: no-repeat;
@@ -858,7 +907,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    height: calc(100vh - 110px);
+    min-height: calc(100vh - 170px);
     overflow: auto;
     background-color: #fff;
 }
@@ -902,7 +951,7 @@ bottom: 50px;
 }
 
 .overlay-second-block {
-    height: calc(100vh - 110px);
+    height: calc(100vh - 180px);
     overflow-y: auto;
 }
 
@@ -923,7 +972,7 @@ bottom: 50px;
     background-color: #fff;
     box-shadow: 0px 0 3px 1px #ccc;
     margin-bottom: 10px;
-    padding: 28px 30px 19px;
+    padding: 15px 30px 15px;
 }
 
 .overlay-participants-name {
@@ -1025,7 +1074,7 @@ bottom: 50px;
 }
 
 .chat-window-items .remote {
-    background-color: #fff;
+    background-color: #dedbdb;
     float: left;
     margin: 10px 10px 10px 50px;
     border-radius: 0px 10px 10px 10px;
@@ -1453,7 +1502,7 @@ bottom: 50px;
 }
 
 #mute img {
-    width: 40px;
+    width: 50px;
 }
 
 .profileSaveBtn {

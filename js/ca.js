@@ -57,6 +57,8 @@ $(document).ready(function() {
     createGroupBtn.onclick = add_new_group;
     callAnswerBtn = document.getElementById("callAnswerBtn");
     callDeclineBtn = document.getElementById("callDeclineBtn");
+    // muteUnmute = document.getElementById("callDeclineBtn");
+    // callDeclineBtn = document.getElementById("callDeclineBtn");
     conferenceCallAnswerBtn = document.getElementById("conferenceCallAnswerBtn");
     conferenceCallDeclineBtn = document.getElementById("conferenceCallDeclineBtn");
     callAnswerBtn.onclick = onCallAnswer;
@@ -69,6 +71,7 @@ $(document).ready(function() {
     CS.contacts.onMessage(handlePresenceFromIML);
     CS.chat.onMessage(handleChatFromIML);
     CS.call.onMessage(handleCallFromIML);
+    CS.groupManagemt.onMessage(handleGroupManagemtFromIML);
 
     $("#mute").on("click", function() {
         if (!CS.call.isMuted) {
@@ -111,8 +114,9 @@ $(document).ready(function() {
                 console.log("saving call record");
             });
 
-            $("#chatDisplay").show();
+            $("#chatDisplay").css('display', 'block');
 
+            $("#chatDisplayBlock").css('display', 'flex');
         })
         // $("#conferenceCallControls").on("click", "#conferenceCallEnd", function() {
 
@@ -231,7 +235,7 @@ $(document).ready(function() {
             else
                 ct = CS.chat.ChatFileType.DOCUMENT;
 
-            var ret = CS.chat.sendFile(remoteUser, ct, fi.files.item(0).type, undefined, fi.files.item(0), 0, function(err, resp) {
+            var ret = CS.chat.sendFile(remoteUser, ct, fi.files.item(0).type, undefined, fi.files.item(0), 0, CS.appId, function(err, resp) {
                 if (err != 200) {
                     console.log("send file in chat failed");
                 } else {
@@ -365,8 +369,10 @@ $(document).ready(function() {
     })
 
     $("#rightSection .video-call").on("click", function() {
-        $('#localVideo').show();
-        $('#remoteVideo').show();
+        $('#localVideo').css("display", "block");
+        $('#remoteVideo').css("display", "block");
+
+
 
         makeVideoCall(true);
         var data = { "id": "--", "time": Date.now(), "isLocal": true, "message": "Call", "type": "call-Video", "status": "Attempted" };
@@ -406,8 +412,10 @@ $(document).ready(function() {
             }
         });
     });
-    $("#rightSection .group-audio-call, #rightSection .group-attachment").on("click", function() {
-        return alert("This feature will be relase in next version");
+    // $("#rightSection .group-audio-call, #rightSection .group-attachment").on("click", function() {
+    $("#rightSection .group-attachment").on("click", function() {
+        // return alert("This feature will be relase in next version");
+
     })
 
     $("#rightSection .group-video-call").on("click", function() {
@@ -1133,17 +1141,19 @@ function makePSTNCall() {
 
     $("#callWrapper").show()
         // $("#wrapper").hide();
-    $("#call-mem-name").text(videoCallTo);
+    $(".call-mem-name").text(videoCallTo);
     // $('#callControls').show();
 
     $('.call-header, .call-footer').css("display", "flex");
-    // $("#call-mem-name").text(videoCallTo)
+    // $(".call-mem-name").text(videoCallTo)
 }
 
 
 
 function makeVideoCall(isVideoCall) {
     //videoCallTo
+    $('#chatDisplay').css('display', 'none');
+    $('#chatDisplayBlock').css('display', 'none');
     callId = CS.call.startCall(remoteUser, "localVideo", "remoteVideo", isVideoCall, function(code, phrase) {
         stopTimer();
         window.sectics = 0;
@@ -1163,7 +1173,7 @@ function makeVideoCall(isVideoCall) {
     $('#leftSection').hide();
 
     $('.call-header, .call-footer').css("display", "flex");
-    $("#call-mem-name").text(videoCallTo)
+    $(".call-mem-name").text(videoCallTo)
 }
 
 function onConferenceCallAnswer() {
@@ -1185,7 +1195,7 @@ function onConferenceCallAnswer() {
     $('#leftSection').hide();
 
     $('.call-header, .conference-call-footer').css("display", "flex");
-    $("#call-mem-name").text(videoCallTo);
+    $(".call-mem-name").text(videoCallTo);
 }
 
 function makeGroupVideoCall(isVideoCall) {
@@ -1221,7 +1231,7 @@ function makeGroupVideoCall(isVideoCall) {
                 $('#leftSection').hide();
 
                 $('.call-header, .conference-call-footer').css("display", "flex");
-                $("#call-mem-name").text(videoCallTo);
+                $(".call-mem-name").text(videoCallTo);
                 alert("hi");
                 //CS.call.joinConferenceAsPublisher()
             }, 1000);
@@ -1303,7 +1313,10 @@ function onCallDecline() {
         console.log("ret " + ret);
         console.dir("resp" + resp);
     });
-    $("#callModal").modal('hide')
+    $("#callModal").modal('hide');
+    $('#chatDisplayBlock').css('display', 'flex');
+    $('#chatDisplay').css('display', 'block');
+
 }
 
 function onCallAnswer() {
@@ -1314,7 +1327,10 @@ function onCallAnswer() {
     isCallAnswered = true;
     $("#wrapper, #leftSection, .righthead").hide();
     $('.container-fluid, .call-header, .call-footer').css("display", "flex");
-    $('#call-mem-name').html(videoCallTo);
+    $('.call-mem-name').html(videoCallTo);
+    $('#chatDisplayBlock').css('display', 'none');
+    $('#chatDisplay').css('display', 'none');
+    $('#welcome').css('display', 'none');
 
 
 }
@@ -1350,6 +1366,12 @@ function startTimer() {
 
 function stopTimer() {
     clearInterval(timerid);
+}
+
+function handleGroupManagemtFromIML(msgType, resp) {
+    console.log("handle group", msgType);
+    alert("handle group" + msgType);
+
 }
 
 function handleCallFromIML(msgType, resp) {
@@ -1717,30 +1739,125 @@ function showChatMessage(msg, isSameDay) {
 
     var cbody, tmp = "";
     if (msg.type == "image") {
-        var url = window.CS.chat.getMediaURLPrefix() + msg.message;
-        if (msg.thumbnail) {
-            url = window.CS.chat.getMediaURLPrefix() + msg.thumbnail;
-            tmp = `<a href="${window.CS.chat.getMediaURLPrefix() + msg.message}" target="_blank"> Download full image </a>`;
-        }
-        cbody = `<img width="100%" height=calc(100% - 220px) onload=updateScroll() src="${url}" >` + tmp;
-    } else if (msg.type == "call-Audio") {
+        // var url = window.CS.chat.getMediaURLPrefix() + msg.message;
+        // if (msg.thumbnail) {
+        //     url = window.CS.chat.getMediaURLPrefix() + msg.thumbnail;
+        //     tmp = `<a href="${window.CS.chat.getMediaURLPrefix() + msg.message}" target="_blank"> Download full image </a>`;
+        // }
+        // cbody = `<img width="100%" height=calc(100% - 220px) onload=updateScroll() src="${url}" >` + tmp;
+
+        window.CS.chat.getMediaURLPrefix(msg.message, CS.appId, function(ret, prefix) {
+            var url = prefix;
+            if (msg.thumbnail) {
+                window.CS.chat.getMediaURLPrefix(msg.message, CS.appId, function(ret, prefix) {
+                    url = prefix;
+                    tmp = `<a href="${url}" target="_blank"> Download full image </a>`;
+                    cbody = `<img width="100%" height=calc(100% - 220px) onload=updateScroll() src="${url}" >` + tmp;
+                    showChatMessageCb(msg, isSameDay, chatStatus, cbody)
+                })
+            } else {
+                cbody = `<img width="100%" height=calc(100% - 220px) onload=updateScroll() src="${url}" >` + tmp;
+                showChatMessageCb(msg, isSameDay, chatStatus, cbody)
+            }
+        })
+
+
+    }
+    //      else if (msg.type == "call-Audio") {
+    //         cbody = `<div class="iconSec"><img src="./images/phone.png" width="40px" height="40px" /></div> <div class="messageSec">Status '${msg.status}'</div>`;
+    //     } else if (msg.type == "call-Video") {
+    //         cbody = `<div class="iconSec"><img src="./images/phone.png" width="40px" height="40px" /></div> <div class="messageSec">Status '${msg.status}'</div>`;
+    //     } else if (msg.type == "video") {
+    //         cbody = `<video width="400px" height="300px" onloadeddata=updateScroll() onloadstart=updateScroll() controls> <source src="${window.CS.chat.getMediaURLPrefix() + msg.message}" > </video>`;
+    //     } else if (msg.type == "location") {
+    //         cbody = msg.message;
+    //     } else if (msg.type == "contact") {
+    //         cbody = msg.message;
+    //     } else if (msg.type == "Text") {
+    //         cbody = msg.message;
+    //     } else {
+    //         cbody = `<a href="${window.CS.chat.getMediaURLPrefix() + msg.message}" target="_blank" >Download ${msg.type}</a>`;
+    //     }
+
+    //     var localMsg = `
+    //    <div class="bubble local" id="${msg.id}">
+    //    <div class="message" >
+    //    ${cbody}
+    //    </div>
+    //    <div class="tstamp">${secondsToHms(msg.time)}
+    //      ${chatStatus}
+    //    </div>
+    //  </div>
+    //    `
+    //         //if number is remote/me add this
+    //     var remoteMsg = `
+    //    <div class="bubble remote" id="${msg.id}">
+    //    <div class="message" > 
+    //     ${cbody}
+    //    </div>
+    //    <div class="message-status"></div><div class="tstamp">${secondsToHms(msg.time)}</div>
+    //    </div>    
+    //    `;
+
+    //     var seperator = "";
+    //     if (!isSameDay) {
+    //         var date = new Date(msg.time);
+
+    //         seperator = date.toDateString();
+
+
+    //         var dateSeperator = `
+    //       <div class="datebubble">
+    //          <span class="message" > 
+    //             ${seperator}
+    //          </span>
+    //       </div>    
+    //       `;
+    //         $("#chatItems .chat-window-items").append(dateSeperator);
+    //     }
+
+
+    //     if (msg.isLocal) {
+    //         $("#chatItems .chat-window-items").append(localMsg)
+    //     } else {
+    //         $("#chatItems .chat-window-items").append(remoteMsg)
+    //     }
+    else if (msg.type == "call-Audio") {
         cbody = `<div class="iconSec"><img src="./images/phone.png" width="40px" height="40px" /></div> <div class="messageSec">Status '${msg.status}'</div>`;
+        showChatMessageCb(msg, isSameDay, chatStatus, cbody)
     } else if (msg.type == "call-Video") {
         cbody = `<div class="iconSec"><img src="./images/phone.png" width="40px" height="40px" /></div> <div class="messageSec">Status '${msg.status}'</div>`;
+        showChatMessageCb(msg, isSameDay, chatStatus, cbody)
     } else if (msg.type == "video") {
-        cbody = `<video width="400px" height="300px" onloadeddata=updateScroll() onloadstart=updateScroll() controls> <source src="${window.CS.chat.getMediaURLPrefix() + msg.message}" > </video>`;
+        window.CS.chat.getMediaURLPrefix(msg.message, function(ret, prefix) {
+            var url = prefix;
+            cbody = `<video width="400px" height="300px" onloadeddata=updateScroll() onloadstart=updateScroll() controls> <source src="${url}" > </video>`;
+            showChatMessageCb(msg, isSameDay, chatStatus, cbody)
+        });
     } else if (msg.type == "location") {
         cbody = msg.message;
+        showChatMessageCb(msg, isSameDay, chatStatus, cbody)
     } else if (msg.type == "contact") {
         cbody = msg.message;
+        showChatMessageCb(msg, isSameDay, chatStatus, cbody)
     } else if (msg.type == "Text") {
         cbody = msg.message;
+        showChatMessageCb(msg, isSameDay, chatStatus, cbody)
     } else {
-        cbody = `<a href="${window.CS.chat.getMediaURLPrefix() + msg.message}" target="_blank" >Download ${msg.type}</a>`;
+        window.CS.chat.getMediaURLPrefix(msg.message, function(ret, prefix) {
+            var url = prefix;
+            cbody = `<a href="${url}" target="_blank" >Download ${msg.type}</a>`;
+            showChatMessageCb(msg, isSameDay, chatStatus, cbody)
+        });
     }
+}
 
+function showChatMessageCb(msg, isSameDay, cStatus, cBody) {
+    var chatStatus = cStatus;
+    var cbody = cBody;
     var localMsg = `
    <div class="bubble local" id="${msg.id}">
+   <div class="arrow-down-btn"></div>
    <div class="message" >
    ${cbody}
    </div>
@@ -1752,6 +1869,7 @@ function showChatMessage(msg, isSameDay) {
         //if number is remote/me add this
     var remoteMsg = `
    <div class="bubble remote" id="${msg.id}">
+   <div class="arrow-down-btn"></div>
    <div class="message" > 
     ${cbody}
    </div>
@@ -1762,10 +1880,7 @@ function showChatMessage(msg, isSameDay) {
     var seperator = "";
     if (!isSameDay) {
         var date = new Date(msg.time);
-
         seperator = date.toDateString();
-
-
         var dateSeperator = `
       <div class="datebubble">
          <span class="message" > 
@@ -1776,12 +1891,12 @@ function showChatMessage(msg, isSameDay) {
         $("#chatItems .chat-window-items").append(dateSeperator);
     }
 
-
     if (msg.isLocal) {
         $("#chatItems .chat-window-items").append(localMsg)
     } else {
         $("#chatItems .chat-window-items").append(remoteMsg)
     }
+
 }
 
 function removeFromRecentActivityList(user) {
@@ -1910,6 +2025,7 @@ function showContactsList() {
         }
 
         var contactItem = `<div class="con-list-mem" id="${curkey}">
+      
       <div class="mem-pic">
           <i class="fa fa-user-circle" aria-hidden="true"></i>
           <!-- replace with below image after profile pic support
@@ -1929,6 +2045,7 @@ function showContactsList() {
             $("#contactsList").append("----Non app users----");
 
         var contactItem = `<div class="con-list-mem">
+        <div class="arrow-down-btn"></div>
       <div class="mem-pic">
           <i class="fa fa-user-circle" aria-hidden="true"></i>
           <!-- replace with below image after profile pic support
@@ -1959,6 +2076,7 @@ function onActivateAccount() {
 }
 
 function add_new_contact() {
+    $('#add-new-contact').modal('hide');
     CS.contacts.addContact(addContactTxb.value, function(err, resp) {
         if (err != 200 && err != 204) {
             console.log("add contact failed with response code " + err + " reason " + resp);
@@ -1975,6 +2093,7 @@ function add_new_contact() {
 
 function add_new_group() {
     var groupName = $("#groupName").val();
+    $('#webGroupChat').modal('hide');
     if (groupName.length == 0)
         return;
     $("#groupName").val("");
@@ -2246,9 +2365,10 @@ function readyUserUI(cid, flag) {
 
         var groupcontactsDisplayItem = [];
         for (var i = 0; i < _groupcontactsDisplayItem.length; i++) {
-            if (appContactsList[_groupcontactsDisplayItem[i]]) {
-                var participantsList = appContactsList[_groupcontactsDisplayItem[i]].name;
+            if (appContactsList[_groupcontactsDisplayItem[i]] != undefined) {
+                var participantsList = (appContactsList[_groupcontactsDisplayItem[i]].name != '') ? appContactsList[_groupcontactsDisplayItem[i]].name : appContactsList[_groupcontactsDisplayItem[i]].mobileNumber;
                 groupcontactsDisplayItem.push(participantsList);
+
             } else {
                 groupcontactsDisplayItem.push(_groupcontactsDisplayItem[i])
             }
@@ -2270,8 +2390,9 @@ function readyUserUI(cid, flag) {
         remoteUser = cid;
 
         $("#welcome").hide();
-        $("#chatDisplay").show();
+        $("#chatDisplay").css('display', 'block');
         $('.righthead').show();
+        $("#chatDisplayBlock").css('display', 'flex');
 
         $('#leftSection').show();
     } else {
@@ -2286,6 +2407,7 @@ function readyUserUI(cid, flag) {
 
 }
 
+
 function loadOverlayDetails(groupid) {
     $('#addParticipants').remove();
     var initialOverlayDetails = groupDetailsJson[groupid];
@@ -2294,7 +2416,7 @@ function loadOverlayDetails(groupid) {
     var groupcontactsDisplayItem = [];
 
     for (var i = 0; i < _groupcontactsDisplayItem.length; i++) {
-        if (appContactsList[_groupcontactsDisplayItem[i]]) {
+        if (appContactsList[_groupcontactsDisplayItem[i]] != undefined) {
             var participantsList = appContactsList[_groupcontactsDisplayItem[i]].name;
             groupcontactsDisplayItem.push(participantsList);
         } else {
@@ -2603,7 +2725,8 @@ function delGroup() {
                 updateContacts();
                 retGetGroupList(false);
 
-                $("#chatDisplay").hide();
+                $("#chatDisplay").css('display', 'none');
+                $("#chatDisplayBlock").css('display', 'none');
                 $('#overlay').css("display", "none");
             }
         });
@@ -2628,7 +2751,34 @@ function exitGroup(e) {
                 retGetSpecificGroupDetails(groupid);
                 $("#welcome").show();
 
-                $("#chatDisplay").hide();
+                $("#chatDisplay").css('display', 'none');
+                $("#chatDisplayBlock").css('display', 'none');
+                $('#overlay').css("display", "none");
+            }
+        });
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function blockGroup(e) {
+    var groupid = $(".overlay-group-name").attr("id");
+    var mobilenumber = $(".profile-name").text();
+    var retVal = confirm("Do you want to block the group ?");
+    if (retVal == true) {
+        CS.chat.blockGroup(groupid, mobilenumber, function(err, resp) {
+            if (err != 200) {
+                alert("block group failed with code " + err + " reason " + resp);
+            } else {
+                alert("block the group is successfully");
+                console.dir(resp);
+
+                retGetSpecificGroupDetails(groupid);
+                $("#welcome").show();
+
+                $("#chatDisplay").css('display', 'none');
+                $("#chatDisplayBlock").css('display', 'none');
                 $('#overlay').css("display", "none");
             }
         });

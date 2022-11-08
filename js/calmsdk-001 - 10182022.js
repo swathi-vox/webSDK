@@ -186,7 +186,13 @@
                 if (window.CS.chat.onMessagecb)
                     window.CS.chat.onMessagecb(obj.chatRequestType[obj.proto_msgType.values.E_GROUP_CHAT_DELIVERY_RQT], { "id": buf.stGroupChatDeliveryReq.uChatID, "time": buf.stGroupChatDeliveryReq.uDeliveryTime, "remoteUser": buf.stGroupChatDeliveryReq.sGroupID, "groupid": buf.stGroupChatDeliveryReq.sGroupID });
                 break;
-
+            case obj.proto_msgType.values.E_CHAT_READ_RQT:
+                console.log("chat read");
+                var payload = { uVersion: obj.protoVersion, stChatReadRes: { ullTransId: buf.stChatReadReq.stHdrs.ullTransId, sMobNu: obj.localUser, uChatID: buf.stChatReadReq.uChatID, ret: obj.proto_retCodes.values.E_200_OK } };
+                send_msg(obj, false, obj.proto_msgType.values.E_CHAT_READ_RSP, payload, false);
+                if (window.CS.chat.onMessagecb)
+                    window.CS.chat.onMessagecb(obj.chatRequestType[obj.proto_msgType.values.E_CHAT_READ_RQT], { "id": buf.stChatReadReq.uChatID, "time": buf.stChatReadReq.uReadTime, "remoteUser": buf.stChatReadReq.stHdrs.sMobNu });
+                break;
             case obj.proto_msgType.values.E_GROUP_CHAT_READ_RQT:
                 console.log("group chat read");
                 var payload = { uVersion: obj.protoVersion, stGroupChatReadRes: { ullTransId: buf.stGroupChatReadReq.stHdrs.ullTransId, sMobNu: obj.buf.stGroupChatReadReq.sGroupID, uChatID: buf.stGroupChatReadReq.uChatID, sGroupID: buf.stGroupChatReadReq.sGroupID, ret: obj.proto_retCodes.values.E_200_OK } };
@@ -496,10 +502,6 @@
                 if (window.CS.transactionRespCB[buf.stAddAdminsToGroupRes.ullTransId])
                     window.CS.transactionRespCB[buf.stAddAdminsToGroupRes.ullTransId](obj.imlrespcode[buf.stAddAdminsToGroupRes.ret].code, { groupid: buf.stAddAdminsToGroupRes.sGroupID, groupAdmins: buf.stAddAdminsToGroupRes.sAdminNumber });
                 break;
-            case obj.proto_msgType.values.E_BLOCK_GROUP_RSP:
-                if (window.CS.transactionRespCB[buf.stBlockGroupRes.ullTransId])
-                    window.CS.transactionRespCB[buf.stBlockGroupRes.ullTransId](obj.imlrespcode[buf.stBlockGroupRes.ret].code, { groupid: buf.stBlockGroupRes.sGroupID, mobileNumber: buf.stBlockGroupRes.sMobNu });
-                break;
             case obj.proto_msgType.values.E_DEL_ADMINS_TO_GROUP_RSP:
                 if (window.CS.transactionRespCB[buf.stDelAdminsToGroupRes.ullTransId])
                     window.CS.transactionRespCB[buf.stDelAdminsToGroupRes.ullTransId](obj.imlrespcode[buf.stDelAdminsToGroupRes.ret].code, buf.stDelAdminsToGroupRes.sGroupID);
@@ -511,61 +513,6 @@
             case obj.proto_msgType.values.E_UNBLOCK_NUM_RSP:
                 if (window.CS.transactionRespCB[buf.stUnBlockNumRes.ullTransId])
                     window.CS.transactionRespCB[buf.stUnBlockNumRes.ullTransId](obj.imlrespcode[buf.stUnBlockNumRes.ret].code);
-                break;
-            case obj.proto_msgType.values.E_USER_ADDED_TO_GROUP_RQT:
-                console.log("group user added");
-                var payload = { uVersion: obj.protoVersion, stUserAddedToGroupRes: { ullTransId: buf.stUserAddedToGroupReq.stHdrs.ullTransId, sMobNu: obj.localUser, sGroupID: buf.stUserAddedToGroupReq.sGroupID, ret: obj.proto_retCodes.values.E_200_OK } };
-                send_msg(obj, false, obj.proto_msgType.values.E_USER_ADDED_TO_GROUP_RSP, payload, false);
-                if (window.CS.groupManagemt.onMessagecb)
-                    window.CS.groupManagemt.onMessagecb(obj.groupManagemtType[obj.proto_msgType.values.E_USER_ADDED_TO_GROUP_RQT], { "description": buf.stUserAddedToGroupReq.sDescription, "profilePic": buf.stUserAddedToGroupReq.sProfilePic, "sGroupContacts": buf.stUserAddedToGroupReq.sGroupContacts, "groupName": buf.stUserAddedToGroupReq.sName, "groupID": buf.stUserAddedToGroupReq.sGroupID, "groupAdmins": buf.stUserAddedToGroupReq.sadmins });
-                break;
-            case obj.proto_msgType.values.E_USER_DELETED_TO_GROUP_RQT:
-                console.log("group user deleted");
-                var payload = { uVersion: obj.protoVersion, stUserDeletedToGroupRes: { ullTransId: buf.stUserDeletedToGroupReq.stHdrs.ullTransId, sMobNu: obj.localUser, sGroupID: buf.stUserDeletedToGroupReq.sGroupID, ret: obj.proto_retCodes.values.E_200_OK } };
-                send_msg(obj, false, obj.proto_msgType.values.E_USER_DELETED_TO_GROUP_RSP, payload, false);
-                if (window.CS.groupManagemt.onMessagecb)
-                    window.CS.groupManagemt.onMessagecb(obj.groupManagemtType[obj.proto_msgType.values.E_USER_DELETED_TO_GROUP_RQT], { "description": buf.stUserDeletedToGroupReq.sDescription, "profilePic": buf.stUserDeletedToGroupReq.sProfilePic, "sGroupContacts": buf.stUserDeletedToGroupReq.sGroupContacts, "groupName": buf.stUserDeletedToGroupReq.sName, "groupID": buf.stUserDeletedToGroupReq.sGroupID, "groupAdmins": buf.stUserDeletedToGroupReq.sadmins });
-                break;
-            case obj.proto_msgType.values.E_ADMIN_ADDED_TO_GROUP_RQT:
-                console.log("group  user assigned as Admin");
-                var payload = { uVersion: obj.protoVersion, stAdminAddedToGroupRes: { ullTransId: buf.stAdminAddedToGroupReq.stHdrs.ullTransId, sMobNu: obj.localUser, sGroupID: buf.stAdminAddedToGroupReq.sGroupID, ret: obj.proto_retCodes.values.E_200_OK } };
-                send_msg(obj, false, obj.proto_msgType.values.E_ADMIN_ADDED_TO_GROUP_RSP, payload, false);
-
-                if (window.CS.groupManagemt.onMessagecb)
-                    window.CS.groupManagemt.onMessagecb(obj.groupManagemtType[obj.proto_msgType.values.E_ADMIN_ADDED_TO_GROUP_RQT], { "description": buf.stAdminAddedToGroupReq.sDescription, "profilePic": buf.stAdminAddedToGroupReq.sProfilePic, "groupName": buf.stAdminAddedToGroupReq.sName, "groupID": buf.stAdminAddedToGroupReq.sGroupID, "groupAdmins": buf.stAdminAddedToGroupReq.sadmins });
-                break;
-            case obj.proto_msgType.values.E_ADMIN_DELETED_TO_GROUP_RQT:
-                console.log("group dismissed user as Admin");
-                var payload = { uVersion: obj.protoVersion, stAdminDeletedToGroupRes: { ullTransId: buf.stAdminDeletedToGroupReq.stHdrs.ullTransId, sMobNu: obj.localUser, sGroupID: buf.stAdminDeletedToGroupReq.sGroupID, ret: obj.proto_retCodes.values.E_200_OK } };
-                send_msg(obj, false, obj.proto_msgType.values.E_ADMIN_DELETED_TO_GROUP_RSP, payload, false);
-
-                if (window.CS.groupManagemt.onMessagecb)
-                    window.CS.groupManagemt.onMessagecb(obj.groupManagemtType[obj.proto_msgType.values.E_ADMIN_DELETED_TO_GROUP_RQT], { "description": buf.stAdminDeletedToGroupReq.sDescription, "groupName": buf.stAdminDeletedToGroupReq.sName, "groupID": buf.stAdminDeletedToGroupReq.sGroupID, "profilePic": buf.stAdminDeletedToGroupReq.sProfilePic, "groupAdmins": buf.stAdminDeletedToGroupReq.sadmins });
-                break;
-            case obj.proto_msgType.values.E_USER_EXITED_TO_GROUP_RQT:
-                console.log("group  user left");
-                var payload = { uVersion: obj.protoVersion, stUserExitedToGroupRes: { ullTransId: buf.stUserExitedToGroupReq.stHdrs.ullTransId, sMobNu: obj.localUser, sGroupID: buf.stUserExitedToGroupReq.sGroupID, ret: obj.proto_retCodes.values.E_200_OK } };
-                send_msg(obj, false, obj.proto_msgType.values.E_ADMIN_DELETED_TO_GROUP_RSP, payload, false);
-
-                if (window.CS.groupManagemt.onMessagecb)
-                    window.CS.groupManagemt.onMessagecb(obj.groupManagemtType[obj.proto_msgType.values.E_USER_EXITED_TO_GROUP_RQT], { "description": buf.stUserExitedToGroupReq.sDescription, "groupName": buf.stUserExitedToGroupReq.sName, "groupID": buf.stUserExitedToGroupReq.sGroupID, "profilePic": buf.stUserExitedToGroupReq.sProfilePic, "userWhoLeft": buf.stUserExitedToGroupReq.sExitNumber });
-                break;
-            case obj.proto_msgType.values.E_UPDATED_INFO_TO_GROUP_RQT:
-                console.log("group  Updated");
-                var payload = { uVersion: obj.protoVersion, stUpdatedInfoToGroupRes: { ullTransId: buf.stUpdatedInfoToGroupReq.stHdrs.ullTransId, sMobNu: obj.localUser, sGroupID: buf.stUpdatedInfoToGroupReq.sGroupID, ret: obj.proto_retCodes.values.E_200_OK } };
-                send_msg(obj, false, obj.proto_msgType.values.E_UPDATED_INFO_TO_GROUP_RSP, payload, false);
-
-                if (window.CS.groupManagemt.onMessagecb)
-                    window.CS.groupManagemt.onMessagecb(obj.groupManagemtType[obj.proto_msgType.values.E_UPDATED_INFO_TO_GROUP_RQT], { "description": buf.stUpdatedInfoToGroupReq.sDescription, "groupName": buf.stUpdatedInfoToGroupReq.sName, "groupID": buf.stUpdatedInfoToGroupReq.sGroupID, "profilePic": buf.stUpdatedInfoToGroupReq.sProfilePic });
-                break;
-
-
-            case obj.proto_msgType.values.E_CHAT_READ_RQT:
-                console.log("chat read");
-                var payload = { uVersion: obj.protoVersion, stChatReadRes: { ullTransId: buf.stChatReadReq.stHdrs.ullTransId, sMobNu: obj.localUser, uChatID: buf.stChatReadReq.uChatID, ret: obj.proto_retCodes.values.E_200_OK } };
-                send_msg(obj, false, obj.proto_msgType.values.E_CHAT_READ_RSP, payload, false);
-                if (window.CS.chat.onMessagecb)
-                    window.CS.chat.onMessagecb(obj.chatRequestType[obj.proto_msgType.values.E_CHAT_READ_RQT], { "id": buf.stChatReadReq.uChatID, "time": buf.stChatReadReq.uReadTime, "remoteUser": buf.stChatReadReq.stHdrs.sMobNu });
                 break;
             default:
                 console.log("un handled message received " + msgType);
@@ -1174,21 +1121,6 @@
         //console.log("chat on message callback initialized");
     };
 
-    /* Chat Constructor */
-    var GroupManagemt = function() {
-        // this.groupSeqNo = 1;
-    };
-
-    GroupManagemt.prototype.init = function(parent) {
-        this.super = parent;
-        //console.log("chat initialized");
-    };
-
-    GroupManagemt.prototype.onMessage = function(cb) {
-        this.onMessagecb = cb;
-        //console.log("chat on message callback initialized");
-    };
-
 
     Chat.prototype.ChatType = { TEXT_PLAIN: 1, TEXT_HTML: 2, LOCATION: 3, IMAGE: 4, VIDEO: 5, CONTACT: 6, DOCUMENT: 7 };
     Chat.prototype.ChatFileType = { IMAGE: 4, VIDEO: 5, DOCUMENT: 7 };
@@ -1278,64 +1210,7 @@
         return data;
     };
 
-    // var createThumbnail = function(file, fileName, contentType, dLocation, tmpid, recipient, chatId, sentTime, chatFileType, reports) {
-    //     console.log('An image has been loaded');
-
-    //     // Load the image
-    //     var reader = new FileReader();
-    //     reader.onload = function(readerEvent) {
-    //         var image = new Image();
-    //         image.onload = function(imageEvent) {
-
-    //             // Resize the image
-    //             var canvas = document.createElement('canvas'),
-    //                 max_size = 200, // TODO : pull max size from a site config
-    //                 width = image.width,
-    //                 height = image.height;
-    //             if (width > height) {
-    //                 if (width > max_size) {
-    //                     height *= max_size / width;
-    //                     width = max_size;
-    //                 }
-    //             } else {
-    //                 if (height > max_size) {
-    //                     width *= max_size / height;
-    //                     height = max_size;
-    //                 }
-    //             }
-
-    //             canvas.width = width;
-    //             canvas.height = height;
-    //             canvas.getContext('2d').drawImage(image, 0, 0, width, height);
-    //             var dataUrl = canvas.toDataURL('image/png');
-    //             var resizedImage = dataURItoBlob(dataUrl);
-
-    //             //var prev = document.getElementById('pr').appendChild(canvas);
-
-    //             var photoKey = "thumb_" + fileName;
-    //             window.CS.s3.upload({
-    //                 Key: photoKey,
-    //                 Body: resizedImage,
-    //                 ACL: 'public-read'
-    //             }, function(err, data) {
-    //                 if (err) {
-    //                     return alert('There was an error uploading your photo: ', err.message);
-    //                 }
-
-    //                 var payload = { uVersion: window.CS.protoVersion, stChatReq: { stHdrs: { sMobNu: window.CS.localUser, sClientId: window.CS.clientId, ullTransId: tmpid }, sDstMobNu: recipient, uChatID: chatId, uSeqNum: window.CS.chat.chatSeqNo, uSendTime: sentTime, stChatType: chatFileType, dataLen: file.size, reports_req: reports, data: dLocation, sThumbnailUrl: photoKey } };
-    //                 if (contentType)
-    //                     payload.stChatReq.sContentType = contentType;
-
-    //                 send_msg(window.CS, false, window.CS.proto_msgType.values.E_CHAT_RQT, payload, false);
-    //                 console.log("chat file sent out to server");
-    //             });
-    //         }
-    //         image.src = readerEvent.target.result;
-    //     }
-    //     reader.readAsDataURL(file);
-    // };
-
-    var createThumbnail = function(file, fileName, contentType, dLocation, tmpid, recipient, chatId, sentTime, chatFileType, reports, projectid) {
+    var createThumbnail = function(file, fileName, contentType, dLocation, tmpid, recipient, chatId, sentTime, chatFileType, reports) {
         console.log('An image has been loaded');
 
         // Load the image
@@ -1370,47 +1245,22 @@
                 //var prev = document.getElementById('pr').appendChild(canvas);
 
                 var photoKey = "thumb_" + fileName;
-
-                var username = getCookie("user");
-                var password = getCookie("passwd");
-                // var projectid = getCookie("projectid");
-                var sha256 = new jsSHA('SHA-256', 'TEXT');
-                sha256.update(username + password);
-                var hash = sha256.getHash("HEX");
-                var bucket = "cpaasindia";
-                var bucketkey = projectid + "/tmp";
-
-                $.ajax({
-                    type: "POST",
-                    dataType: "json",
-                    url: "https://proxy.vox-cpaas.in/api/getpresignurlsdk",
-                    data: "projectid=" + projectid + "&username=" + encodeURIComponent(username) + "&password=" + hash + "&bucket=" + bucket + "&subfolder=" + bucketkey + "&file=" + photoKey + "&type=put",
-                    success: function(data) {
-                        $.ajax({
-                            type: "PUT",
-                            url: data.data.message,
-                            data: file,
-                            cache: false,
-                            processData: false,
-                            success: function(data) {
-                                var payload = { uVersion: window.CS.protoVersion, stChatReq: { stHdrs: { sMobNu: window.CS.localUser, sClientId: window.CS.clientId, ullTransId: tmpid }, sDstMobNu: recipient, uChatID: chatId, uSeqNum: window.CS.chat.chatSeqNo, uSendTime: sentTime, stChatType: chatFileType, dataLen: file.size, reports_req: reports, data: dLocation, sThumbnailUrl: photoKey } };
-                                if (contentType)
-                                    payload.stChatReq.sContentType = contentType;
-
-                                send_msg(window.CS, false, window.CS.proto_msgType.values.E_CHAT_RQT, payload);
-                                console.log("chat file sent out to server");
-
-                            },
-                            failure: function(err) {
-                                return alert('There was an error uploading your file: ', err.message);
-                            }
-                        });
-                    },
-                    failure: function(err) {
-                        return alert('There was an error uploading your file: ', err.message);
+                window.CS.s3.upload({
+                    Key: photoKey,
+                    Body: resizedImage,
+                    ACL: 'public-read'
+                }, function(err, data) {
+                    if (err) {
+                        return alert('There was an error uploading your photo: ', err.message);
                     }
-                });
 
+                    var payload = { uVersion: window.CS.protoVersion, stChatReq: { stHdrs: { sMobNu: window.CS.localUser, sClientId: window.CS.clientId, ullTransId: tmpid }, sDstMobNu: recipient, uChatID: chatId, uSeqNum: window.CS.chat.chatSeqNo, uSendTime: sentTime, stChatType: chatFileType, dataLen: file.size, reports_req: reports, data: dLocation, sThumbnailUrl: photoKey } };
+                    if (contentType)
+                        payload.stChatReq.sContentType = contentType;
+
+                    send_msg(window.CS, false, window.CS.proto_msgType.values.E_CHAT_RQT, payload, false);
+                    console.log("chat file sent out to server");
+                });
             }
             image.src = readerEvent.target.result;
         }
@@ -1418,29 +1268,8 @@
     };
 
 
-    Chat.prototype.getMediaURLPrefix = function(fileName, projectid, cb) {
-        //return "https://" + window.CS.s3Bin + ".s3.ap-southeast-1.amazonaws.com/";
-        var username = getCookie("user");
-        var password = getCookie("passwd");
-        // var projectid = getCookie("projectid");
-        var sha256 = new jsSHA('SHA-256', 'TEXT');
-        sha256.update(username + password);
-        var hash = sha256.getHash("HEX");
-        var bucket = "cpaasindia";
-        var bucketkey = projectid + "/tmp";
-
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-            url: "https://proxy.vox-cpaas.in/api/getpresignurlsdk",
-            data: "projectid=" + projectid + "&username=" + encodeURIComponent(username) + "&password=" + hash + "&bucket=" + bucket + "&subfolder=" + bucketkey + "&file=" + fileName + "&type=get",
-            success: function(data) {
-                cb(200, data.data.message);
-            },
-            failure: function(err) {
-                cb(400, "invalid input. chatFileType or file content is empty");
-            }
-        });
+    Chat.prototype.getMediaURLPrefix = function() {
+        return "https://" + window.CS.s3Bin + ".s3.ap-southeast-1.amazonaws.com/";
     };
 
     Chat.prototype.sendPhoto = function(recipient, file, cb) {
@@ -1455,7 +1284,7 @@
         CA.chat.sendFile(recipient, CS.chat.ChatFileType.DOCUMENT, file.type, thumbnail, file, true, cb);
     }
 
-    Chat.prototype.sendFile = function(recipient, chatFileType, contentType, thumbnailUrl, file, reports, projectid, cb) {
+    Chat.prototype.sendFile = function(recipient, chatFileType, contentType, thumbnailUrl, file, reports, cb) {
         if (!chatFileType || chatFileType == "" || !file || file == "") {
             cb(400, "invalid input. chatFileType or file content is empty");
             return -1;
@@ -1468,79 +1297,31 @@
         var sentTime = Math.floor(Date.now());
 
         var photoKey = generate_token(15) + '_' + file.name;
-        var username = getCookie("user");
-        var password = getCookie("passwd");
-        // var projectid = CS.appId;
-        var sha256 = new jsSHA('SHA-256', 'TEXT');
-        sha256.update(username + password);
-        var hash = sha256.getHash("HEX");
-        var bucket = "cpaasindia";
-        var bucketkey = projectid + "/tmp";
+        window.CS.s3.upload({
+            Key: photoKey,
+            Body: file,
+            ACL: 'public-read'
+        }, function(err, data) {
+            if (err) {
+                return alert('There was an error uploading your photo: ', err.message);
+            }
+            window.CS.respData[tmpid] = { "fileName": photoKey };
 
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-            url: "https://proxy.vox-cpaas.in/api/getpresignurlsdk",
-            data: "projectid=" + projectid + "&username=" + encodeURIComponent(username) + "&password=" + hash + "&bucket=" + bucket + "&subfolder=" + bucketkey + "&file=" + photoKey + "&type=put",
-            success: function(data) {
-                $.ajax({
-                    type: "PUT",
-                    url: data.data.message,
-                    data: file,
-                    cache: false,
-                    processData: false,
-                    success: function(data) {
+            if (file.type.match(/image.*/)) {
+                createThumbnail(file, photoKey, contentType, data.Key, tmpid, recipient, chatId, sentTime, chatFileType, reports);
+            } else {
+                var payload = { uVersion: window.CS.protoVersion, stChatReq: { stHdrs: { sMobNu: window.CS.localUser, sClientId: window.CS.clientId, ullTransId: tmpid }, sDstMobNu: recipient, uChatID: chatId, uSeqNum: window.CS.chat.chatSeqNo, uSendTime: sentTime, stChatType: chatFileType, dataLen: file.size, reports_req: reports, data: data.Key } };
+                if (contentType)
+                    payload.stChatReq.sContentType = contentType;
 
-                        window.CS.respData[tmpid] = { "fileName": photoKey };
-                        if (file.type.match(/image.*/)) {
-                            createThumbnail(file, photoKey, contentType, photoKey, tmpid, recipient, chatId, sentTime, chatFileType, reports, projectid);
-                        } else {
-                            var payload = { uVersion: window.CS.protoVersion, stChatReq: { stHdrs: { sMobNu: window.CS.localUser, sClientId: window.CS.clientId, ullTransId: tmpid }, sDstMobNu: recipient, uChatID: chatId, uSeqNum: window.CS.chat.chatSeqNo, uSendTime: sentTime, stChatType: chatFileType, dataLen: file.size, reports_req: reports, data: data.Key } };
-                            if (contentType)
-                                payload.stChatReq.sContentType = contentType;
+                if (thumbnailUrl && thumbnailUrl != "")
+                    payload.stChatReq.sThumbnailUrl = thumbnailUrl;
 
-                            if (thumbnailUrl && thumbnailUrl != "")
-                                payload.stChatReq.sThumbnailUrl = thumbnailUrl;
-
-                            send_msg(window.CS, false, window.CS.proto_msgType.values.E_CHAT_RQT, payload);
-                        }
-                    },
-                    failure: function(err) {
-                        return alert('There was an error uploading your file: ', err.message);
-                    }
-                });
-            },
-            failure: function(err) {
-                return alert('There was an error uploading your file: ', err.message);
+                send_msg(window.CS, false, window.CS.proto_msgType.values.E_CHAT_RQT, payload, false);
             }
         });
 
         return { "id": chatId, "sentTime": sentTime, "url": photoKey };
-        // window.CS.s3.upload({
-        //     Key: photoKey,
-        //     Body: file,
-        //     ACL: 'public-read'
-        // }, function(err, data) {
-        //     if (err) {
-        //         return alert('There was an error uploading your photo: ', err.message);
-        //     }
-        //     window.CS.respData[tmpid] = { "fileName": photoKey };
-
-        //     if (file.type.match(/image.*/)) {
-        //         createThumbnail(file, photoKey, contentType, data.Key, tmpid, recipient, chatId, sentTime, chatFileType, reports);
-        //     } else {
-        //         var payload = { uVersion: window.CS.protoVersion, stChatReq: { stHdrs: { sMobNu: window.CS.localUser, sClientId: window.CS.clientId, ullTransId: tmpid }, sDstMobNu: recipient, uChatID: chatId, uSeqNum: window.CS.chat.chatSeqNo, uSendTime: sentTime, stChatType: chatFileType, dataLen: file.size, reports_req: reports, data: data.Key } };
-        //         if (contentType)
-        //             payload.stChatReq.sContentType = contentType;
-
-        //         if (thumbnailUrl && thumbnailUrl != "")
-        //             payload.stChatReq.sThumbnailUrl = thumbnailUrl;
-
-        //         send_msg(window.CS, false, window.CS.proto_msgType.values.E_CHAT_RQT, payload, false);
-        //     }
-        // });
-
-        // return { "id": chatId, "sentTime": sentTime, "url": photoKey };
     }
 
     Chat.prototype.getPendingChat = function(cb) {
@@ -1637,16 +1418,6 @@
         window.CS.transactionRespCB[tmpid] = cb;
         var payload = { uVersion: this.super.protoVersion, stExitFromGroupReq: { stHdrs: { sMobNu: this.super.localUser, sClientId: this.super.clientId, ullTransId: tmpid }, sGroupID: groupID, sPhoneNumber: mobileNumber } };
         send_msg(this.super, false, this.super.proto_msgType.values.E_EXIT_FROM_GROUP_RQT, payload, false);
-    }
-    Chat.prototype.blockGroup = function(groupID, mobileNumber, cb) {
-        if (!this.super.localUser) {
-            cb("400", "User not logged in!");
-            return;
-        }
-        var tmpid = randNum();
-        window.CS.transactionRespCB[tmpid] = cb;
-        var payload = { uVersion: this.super.protoVersion, stBlockGroupReq: { stHdrs: { sMobNu: this.super.localUser, sClientId: this.super.clientId, ullTransId: tmpid }, sGroupID: groupID, sMobNu: mobileNumber } };
-        send_msg(this.super, false, this.super.proto_msgType.values.E_BLOCK_GROUP_RQT, payload, false);
     }
     Chat.prototype.addAdminsToGroup = function(groupID, mobileNumbers, cb) {
         if (!this.super.localUser) {
@@ -2102,7 +1873,7 @@
 
 
     Call.prototype.muteConference = function(callId, bool, cb) {
-
+        debugger
         if (bool) {
             wr_set_local_unmute_conference(this, callId, cb);
             window.CS.call.callObj[callId].isMuted = false;
@@ -2193,16 +1964,6 @@
                 57: "DELIVERED", //window.CS.proto_msgType.values.E_GROUP_CHAT_DELIVERY_RQT
                 59: "READ", //window.CS.proto_msgType.values.E_GROUP_CHAT_READ_RQT 
             };
-            obj.groupManagemtType = {
-                47: "USER-ADDED", //window.CS.proto_msgType.values.E_USER_ADDED_TO_GROUP_RQT
-                49: "USER-DELETED", //window.CS.proto_msgType.values.E_USER_DELETED_TO_GROUP_RQT
-                69: "USER-ASSIGNED-AS-ADMIN", //window.CS.proto_msgType.values.E_ADMIN_ADDED_TO_GROUP_RQT
-                73: "DISMISSED-AS-ADMIN-FROM-GROUP", //window.CS.proto_msgType.values.E_ADMIN_DELETED_TO_GROUP_RQT
-                77: "USER-LEFT", //window.CS.proto_msgType.values.E_USER_EXITED_TO_GROUP_RQT
-                79: "UPDATED-GROUP-INFO" //window.CS.proto_msgType.values.E_UPDATED_INFO_TO_GROUP_RQT
-
-
-            };
             // obj.privacyType = {
             //     0: { type: "Default" },
             //     1: { type: "Public" },
@@ -2272,7 +2033,7 @@
                 195: { code: "OFFER", phrase: "Call offer received" },
                 197: { code: "ANSWERED", phrase: "Call answered received" },
                 199: { code: "END", phrase: "Call end received" },
-                205: { code: "PSTN-END", phrase: "Call end received" },
+                205: { code: "END", phrase: "Call end received" },
                 241: { code: "PSTN-OFFER", phrase: "PSTN Call offer received" },
                 249: { code: "END", phrase: "PSTN Call end received" },
                 295: { code: "RINGING", phrase: "Remote party ringing" },
@@ -2339,9 +2100,6 @@
 
         this.stream = new Stream();
         this.stream.init(this);
-
-        this.groupManagemt = new GroupManagemt();
-        this.groupManagemt.init(this);
 
         //setTimeout(connect_to_iml_server, 100);
         this.subModulesLoadComplete = true;
@@ -2424,12 +2182,10 @@
         //var OneSignalId = '59065d0c-ae2e-4859-be70-408170477ce7';
         //OneSignalId = 'f0b481a9-0cbc-4094-94da-2ed9cdc127d9';
         //iml_server_address = "ws://103.23.140.227:8989";
-        iml_server_address = "wss://proxy.vox-cpaas.in:8989";
+         iml_server_address = "wss://proxy.vox-cpaas.in:8989";
         // iml_server_address = "wss://deltacubes.vox-cpaas.com:8989";
         // iml_server_address = "wss://tringydemo.jadukusaderjuwanene.info:8989"
         window.CS.rtcservers = {};
-        // window.CS.rtcservers.stun = 'stun:13.126.207.239:3478';
-        // window.CS.rtcservers.turn = 'turn:13.126.207.239:3478?transport=udp';
         window.CS.rtcservers.stun = 'stun:stun.l.google.com:19302';
         window.CS.rtcservers.turn = 'turn:34.253.104.58:3478?transport=udp';
         window.CS.rtcservers.turnUser = 'testuser';

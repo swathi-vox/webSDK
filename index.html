@@ -237,18 +237,18 @@
                         <div class="row-dial">
                             <div class="digit" onclick="clearDialer()"> R</div>
                             <div class="digit startDialer" onclick="callStart()" id="startbtn">Call</div>
-                            <video id="localVideo" autoplay muted style="display: none;"></video>
-                            <video id="remoteVideo" autoplay width="200px" height="180px" style="display: none;"></video>
-                            <div class="digit" onclick="muteUnmute()" id="mute"> <i class="fa fa-microphone"></i></div>
+                            <!-- <video id="localVideo" autoplay muted style="display: none;"></video>
+                            <video id="remoteVideo" autoplay width="200px" height="180px" style="display: none;"></video> -->
+                            <div class="digit" onclick="muteUnmute()" id="mute"> </div>
                         </div>
                     </div>
                     <div id="incomingCallScreen" style="display: none;">
                         <audio id="ringtone">
                                 <source src="./res/ringtone.mp3" type="audio/mpeg"  >
                             </audio>
-
+                        <!-- 
                         <video id="localVideo" autoplay muted style="display: none;"></video>
-                        <video id="remoteVideo" autoplay width="200px" height="180px" style="display: none;"></video>
+                        <video id="remoteVideo" autoplay width="200px" height="180px" style="display: none;"></video> -->
                         <h5 id="callerName"></h5>
                         <div class="divAnswerDecline">
                             <div>
@@ -321,7 +321,7 @@
     <div class="container-fluid" id="wrapper" style="display: none;">
         <div class="call-header">
             <!-- <div id="callTimer" class="call-mem-time">callTimer</div> -->
-            <div id="call-mem-name">
+            <div class="call-mem-name">
 
             </div>
             <div class="imgbox" id="profileDiv">
@@ -438,7 +438,7 @@
                     <!-- <i class="fa fa-user" aria-hidden="true"></i> -->
                 </div>
                 <div class="rpanel">
-                    <div class="group-info-contacts-block">
+                    <div class="group-info-contacts-block" onclick="showOverlay()">
 
                         <div class="info">
                             NAME
@@ -449,11 +449,11 @@
                     </div>
                     <div id="callBlock" class="pull-right">
                         <input type="file" max-uploads=1 id="chatFileUpload" style="display: none;" />
-                        <!-- <div class="action-btns remove-contact"><i class="fa fa-user-times" data-toggle="tooltip" title="Remove Contact" aria-hidden="true"></i></div> -->
+                        <div class="action-btns remove-contact"><i class="fa fa-user-times" data-toggle="tooltip" title="Remove Contact" aria-hidden="true"></i></div>
                         <div class="action-btns attachment"><img src="./images/dc-img/ic-attachments.png" alt=""></div>
                         <div class="action-btns video-call"><img src="./images/dc-img/ic-video.png"></div>
                         <div class="action-btns audio-call"><img src="./images/dc-img/ic-call.png" alt=""></div>
-                        <div id="blockUser" class="action-btns block-user unblock"></div>
+                        <!-- <div id="blockUser" class="action-btns block-user unblock"></div> -->
 
                     </div>
                     <div id="callBlockGroup" class="pull-right">
@@ -473,108 +473,40 @@
                 </div>
             </div>
             <!-- Main Chat Window-->
-            <div id="chatDisplay" style="display: none">
-                <div id="chatItems">
-                    <div class="chat-window-items" id="chat-window-scroll-id">
-                        <!--Dynamically  added chat messages-->
+            <div id="chatDisplayBlock" style="display: none;">
+                <div id="chatDisplay" style="display: none">
+                    <div id="chatItems">
+                        <div class="chat-window-items" id="chat-window-scroll-id">
+                            <!--Dynamically  added chat messages-->
 
 
 
-                    </div>
-
-
-                    <!--end remote-->
-                </div>
-
-                <div class="send-message">
-                    <input type="text" id="chatBox" placeholder="type a message">
-                    <button class="sendbtn btn-default" id="sendChat"> Send <img src="./images/dc-img/ic-send-arrow.png"></button>
-                </div>
-            </div>
-
-            <div id="demo-view" class="hide">
-                <div class="container-fluid" id="callWrapper" style="display:none">
-
-                    <video id="localVideo" autoplay muted></video>
-
-                    <video id="remoteVideo" autoplay></video>
-
-
-                    <div id="call-mem-name">
-
-                    </div>
-                    <!-- <div id="callControls">
-                        <div id="mute" class="call-controls"><i class="fa fa-microphone-slash" aria-hidden="true"></i></div>
-                        <div id="callEnd" class="call-controls"> <i class="fa fa-phone" aria-hidden="true"></i></div>
-
-                        <div id="callTimer" class="call-mem-time"></div>
-                    </div> -->
-                    <!-- </div> -->
-                </div>
-                <div class="container-fluid" id="groupCallWrapper" style="display: none;">
-
-                    <!--<video id="local-Video" autoplay muted></video> -->
-                    <video id="remoteVideo0" autoplay></video>
-
-                </div>
-
-                <div class="call-footer">
-                    <div id="callControls">
-                        <div id="callTimer" class="call-mem-time"></div>
-                        <div id="mute" class="call-controls">
-                            <!-- <i class="fa fa-microphone-slash" aria-hidden="true"></i> -->
-                        </div>
-                        <div id="callEnd" class="call-controls">
-                            <!-- <i class="fa fa-phone" aria-hidden="true"></i> -->
                         </div>
 
-                    </div>
-                </div>
-                <div class="conference-call-footer">
-                    <div id="conferenceCallControls">
-                        <div id="callTimer" class="call-mem-time"></div>
-                        <div class="call-controls">
-                            <img src="./images/ic-screen-share-on.png" id="shareButton">
-                        </div>
-                        <div id="muteConference" class="call-controls"></div>
-                        <div id="conferenceCallEnd" class="call-controls">
-                            <!-- <i class="fa fa-phone" aria-hidden="true"></i> -->
-                        </div>
 
+                        <!--end remote-->
                     </div>
-                </div>
-                <div id="profile-page" style="display: none">
-                    <div class="profile-page-block-1">
-                        <div class="profile-inner-page-block-1">
 
-                            <div class="profile-img"><img src="./images/dc-img/ic_calling_avatar.png"></div>
-                            <div class="profile-cam"><img src="./images/dc-img/ic-camera.png"> </div>
-                        </div>
-                        <div class="profile-page-profile-name"></div>
+                    <div class="send-message">
+                        <input type="text" id="chatBox" placeholder="type a message">
+                        <button class="sendbtn btn-default" id="sendChat"> Send <img src="./images/dc-img/ic-send-arrow.png"></button>
                     </div>
-                    <label for="uname">User name</label>
-                    <input type="text" id="uName" name="Uname" placeholder="User Name" autofocus>
-                    <label for="uStatus">User Status</label>
-                    <input type="text" id="uStatus" name="uStatus" placeholder="User Status" autofocus>
-                    <label for="uType">User Type</label>
-                    <input type="text" id="uType" name="uType" placeholder="User Type" autofocus>
-                    <br>
-                    <input type="button" value="Save" class="btn profileSaveBtn" id="setProfileBtn">
                 </div>
+
 
                 <div id="overlay">
                     <div class="overlay-header">
                         <div class="group-close">
                             <button class="overlay-close" onclick="closeOverlay()">
-							<span data-testid="x" data-icon="x" class="">
-								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-									<path fill="currentColor"
-										d="M19.1 17.2l-5.3-5.3 5.3-5.3-1.8-1.8-5.3 5.4-5.3-5.3-1.8 1.7 5.3 5.3-5.3 5.3L6.7 19l5.3-5.3 5.3 5.3 1.8-1.8z">
+                        <span data-testid="x" data-icon="x" class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                                <path fill="currentColor"
+                                    d="M19.1 17.2l-5.3-5.3 5.3-5.3-1.8-1.8-5.3 5.4-5.3-5.3-1.8 1.7 5.3 5.3-5.3 5.3L6.7 19l5.3-5.3 5.3 5.3 1.8-1.8z">
 
-									</path>
-								</svg>
-							</span>
-						</button>
+                                </path>
+                            </svg>
+                        </span>
+                    </button>
                         </div>
 
                         <div>Group info</div>
@@ -622,11 +554,81 @@
                                 <li class="exit-group" onclick="exitGroup(event)"><i class="fa fa-sign-out"></i>&nbsp;&nbsp;
                                     <div>Exit group</div>
                                 </li>
+                                <!-- <li class="exit-group" onclick="blockGroup(event)"><i class="fa fa-sign-out"></i>&nbsp;&nbsp;
+                                    <div id="blockgroup">Block group</div>
+                                </li> -->
                             </ul>
                         </div>
                     </div>
 
                 </div>
+            </div>
+
+            <div id="demo-view" class="hide">
+                <div class="container-fluid" id="callWrapper" style="display:none">
+
+                    <video id="localVideo" autoplay muted></video>
+
+                    <video id="remoteVideo" autoplay></video>
+
+
+
+
+                </div>
+                <div class="container-fluid" id="groupCallWrapper" style="display: none;">
+
+                    <!--<video id="local-Video" autoplay muted></video> -->
+                    <video id="remoteVideo0" autoplay></video>
+
+                </div>
+
+                <div class="call-footer">
+                    <div class="call-mem-name">
+
+                    </div>
+                    <div id="callControls">
+                        <div id="callTimer" class="call-mem-time"></div>
+                        <div id="mute" onclick="muteUnmute()" class="call-controls">
+                            <!-- <i class="fa fa-microphone-slash" aria-hidden="true"></i> -->
+                        </div>
+                        <div id="callEnd" class="call-controls">
+                            <!-- <i class="fa fa-phone" aria-hidden="true"></i> -->
+                        </div>
+
+                    </div>
+                </div>
+                <div class="conference-call-footer">
+                    <div id="conferenceCallControls">
+                        <div id="callTimer" class="call-mem-time"></div>
+                        <div class="call-controls">
+                            <img src="./images/ic-screen-share-on.png" id="shareButton">
+                        </div>
+                        <div id="muteConference" class="call-controls"></div>
+                        <div id="conferenceCallEnd" class="call-controls">
+                            <!-- <i class="fa fa-phone" aria-hidden="true"></i> -->
+                        </div>
+
+                    </div>
+                </div>
+                <div id="profile-page" style="display: none">
+                    <div class="profile-page-block-1">
+                        <div class="profile-inner-page-block-1">
+
+                            <div class="profile-img"><img src="./images/dc-img/ic_calling_avatar.png"></div>
+                            <div class="profile-cam"><img src="./images/dc-img/ic-camera.png"> </div>
+                        </div>
+                        <div class="profile-page-profile-name"></div>
+                    </div>
+                    <label for="uname">User name</label>
+                    <input type="text" id="uName" name="Uname" placeholder="User Name" autofocus>
+                    <label for="uStatus">User Status</label>
+                    <input type="text" id="uStatus" name="uStatus" placeholder="User Status" autofocus>
+                    <label for="uType">User Type</label>
+                    <input type="text" id="uType" name="uType" placeholder="User Type" autofocus>
+                    <br>
+                    <input type="button" value="Save" class="btn profileSaveBtn" id="setProfileBtn">
+                </div>
+
             </div>
 </body>
 

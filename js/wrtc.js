@@ -779,6 +779,7 @@ async function wr_get_local_stream_to_answer_conference1(localStream, callId) {
 
 var localice = [];
 var wr_create_local_stream_to_offer = function(localStream, callId) {
+    console.log("locallll stream")
     var obj = window.CS.call;
     obj.localUiElem.srcObject = localStream;
     obj.localStream = localStream;
@@ -824,7 +825,8 @@ var wr_create_local_stream_to_offer = function(localStream, callId) {
 var wr_send_rem_call = function(obj, callId, isVideoCall, localUiElem, remoteUiElem) {
     obj.localUiElem = document.getElementById(localUiElem);
     obj.remoteUiElem = document.getElementById(remoteUiElem);
-    navigator.mediaDevices.getUserMedia({ audio: true, video: isVideoCall }).then(function(localStream) { wr_create_local_stream_to_offer(localStream, callId); }).catch(getUserMediaFailed);
+    var constraints = { audio: true, video: isVideoCall };
+    navigator.mediaDevices.getUserMedia(constraints).then(function(localStream) { wr_create_local_stream_to_offer(localStream, callId); }).catch(getUserMediaFailed);
 };
 
 // var wr_send_rem_call_conference = async function(obj, conferenceId, isVideoCall, localUser, flag) {
